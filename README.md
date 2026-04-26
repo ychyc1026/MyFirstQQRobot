@@ -1,5 +1,5 @@
 # MyFirstQQRobot
-一个基于 Python 与 go-cqhttp 开发的轻量级 QQ 机器人，
+一个基于 Python 与 napcat 开发的轻量级 QQ 机器人，
 支持关键词自动回复 + AI 大模型 API 智能对话，适合大一入门练手。
 
 ## 功能
