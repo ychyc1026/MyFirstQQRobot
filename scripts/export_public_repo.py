@@ -60,6 +60,7 @@ SKIP_DIR_NAMES = {
     "dist",
     "build",
     ".vite",
+    "ych_bot.egg-info",
 }
 
 SKIP_FILE_SUFFIXES = {
@@ -105,16 +106,16 @@ TEXT_SUFFIXES = {
 }
 
 REPLACEMENTS: tuple[tuple[str, str], ...] = (
-    ("YCH（维护者）", "YCH（维护者）"),
-    ("YCH（维护者）", "YCH（维护者）"),
-    ("创造者为维护者", "创造者为维护者"),
-    ("创造者维护者", "创造者维护者"),
-    ("开发者、创造者：维护者", "开发者、创造者：维护者"),
-    ("维护者", "维护者"),
-    ("2000000001", OWNER_QQ),
-    ("2000000002", BOT_QQ),
-    ("2000000003", FRIEND_QQ),
-    ("2000000004", GROUP_QQ),
+    ("YCH（姚铖颢）", "YCH（维护者）"),
+    ("YCH(姚铖颢)", "YCH（维护者）"),
+    ("创造者为姚铖颢", "创造者为维护者"),
+    ("创造者姚铖颢", "创造者维护者"),
+    ("开发者、创造者：姚铖颢", "开发者、创造者：维护者"),
+    ("姚铖颢", "维护者"),
+    ("2580508026", OWNER_QQ),
+    ("3336425098", BOT_QQ),
+    ("2892917255", FRIEND_QQ),
+    ("928557213", GROUP_QQ),
 )
 
 # Absolute local paths that must not ship.
@@ -125,15 +126,15 @@ PATH_SCRUBS: tuple[tuple[re.Pattern[str], str], ...] = (
         re.compile(r"D:\\\\My_code\\\\napcat-rollback-[^\s`\"']+", re.I),
         "<napcat-rollback-outside-repo>",
     ),
-    (re.compile(r"<napcat-rollback-outside-repo>`\"']+", re.I), "<napcat-rollback-outside-repo>"),
+    (re.compile(r"D:/My_code/napcat-rollback-[^\s`\"']+", re.I), "<napcat-rollback-outside-repo>"),
 )
 
 FORBIDDEN_LITERALS = (
-    "维护者",
-    "2000000001",
-    "2000000002",
-    "2000000003",
-    "2000000004",
+    "姚铖颢",
+    "2580508026",
+    "3336425098",
+    "2892917255",
+    "928557213",
     "BEGIN PRIVATE KEY",
 )
 
