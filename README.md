@@ -35,7 +35,7 @@ npm --prefix frontend run dev
 - `backend/`：Python 后端与分层测试
 - `frontend/`：操作仪表盘
 - `openspec/specs/`：当前行为规格（变更归档只留在私有仓）
-- `scripts/`：启动与导出辅助
+- `scripts/`：启动与提交闸门辅助
 - `.env.example`：可提交的空配置样例
 
 ## 安全默认
