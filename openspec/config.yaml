@@ -1,0 +1,35 @@
+schema: spec-driven
+
+context: |
+  Product: YCH, a Windows-local QQ assistant built on NapCat and OneBot 11.
+  Backend: Python 3.13+, FastAPI, asyncio, SQLite. Frontend: React, TypeScript, Vite, Tailwind CSS.
+  Canonical bot QQ: 2000000002. Immutable creator identity: YCH（维护者）, QQ 2000000001. The current implementation also has separately configurable operational owner and bot-account records; changes to that policy require an explicit spec decision.
+  Safety posture: network, real outbound messaging, Qzone publishing, history collection, model calls, and background execution default off until explicitly configured and verified.
+  Private-chat user data, personas, memories, and imported documents must never leak across users or into group chat.
+  The dashboard is an operator control surface, not a substitute for backend authorization, approval, audit, and idempotency checks.
+  The project runs on a personal Windows computer, so scheduling uses absolute wall-clock time and explicit missed-task policies rather than process uptime.
+  Existing docs are supporting context; openspec/specs is the behavioral source of truth after this baseline is accepted.
+
+rules:
+  proposal:
+    - Separate goals, non-goals, risks, migrations, and user decisions.
+    - State whether real QQ, model, network, or destructive behavior is introduced.
+  specs:
+    - Use testable SHALL requirements and Given/When/Then scenarios.
+    - Include isolation, failure, restart, authorization, and audit scenarios where relevant.
+    - Never mark a planned behavior as current system behavior.
+  design:
+    - Record trust boundaries, data ownership, idempotency, rollback, and Windows restart behavior.
+    - Prefer explicit state machines and typed interfaces over implicit prompt conventions.
+  tasks:
+    - Order tasks so schemas and domain contracts precede adapters and UI.
+    - Include automated tests, browser verification, documentation, and a no-real-network test mode.
+
+operations:
+  apply:
+    guidance:
+      - Do not enable real model, NapCat outbound, Qzone, or history access without explicit owner configuration.
+      - Preserve unrelated user changes and use conventional commits.
+  archive:
+    guidance:
+      - Verify implementation and tests before merging delta specs into the source of truth.

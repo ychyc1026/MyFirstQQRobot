@@ -1,0 +1,23 @@
+{
+  "name": "private_text_burst",
+  "events": [
+    {
+      "time": 1788062400,
+      "self_id": 2000000002,
+      "post_type": "message",
+      "message_type": "private",
+      "message_id": 81001,
+      "user_id": 123456789,
+      "message": [{"type": "text", "data": {"text": "今天有点开心"}}]
+    },
+    {
+      "time": 1788062401,
+      "self_id": 2000000002,
+      "post_type": "message",
+      "message_type": "private",
+      "message_id": 81002,
+      "user_id": 123456789,
+      "message": [{"type": "text", "data": {"text": "想和你说一声"}}]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "group_mixed_segments",
+  "events": [
+    {
+      "time": 1788062500,
+      "self_id": 2000000002,
+      "post_type": "message",
+      "message_type": "group",
+      "message_id": 82001,
+      "group_id": 987654321,
+      "user_id": 223344556,
+      "message": [
+        {"type": "at", "data": {"qq": "2000000002"}},
+        {"type": "text", "data": {"text": " 大家今晚做什么？"}},
+        {"type": "image", "data": {"file": "synthetic-image-id"}}
+      ]
+    }
+  ]
+}

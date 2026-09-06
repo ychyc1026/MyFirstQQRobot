@@ -1,0 +1,4 @@
+schema: spec-driven
+change:
+  title: Bind qualification chat to compiled core identity
+  status: active

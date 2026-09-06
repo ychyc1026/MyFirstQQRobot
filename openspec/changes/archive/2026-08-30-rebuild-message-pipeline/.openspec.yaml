@@ -1,0 +1,4 @@
+schema: spec-driven
+created: 2026-08-28
+goal: Rebuild the private and group QQ message path into a typed, isolated,
+  restart-safe pipeline before enabling real model replies.

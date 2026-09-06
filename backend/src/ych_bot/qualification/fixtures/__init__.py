@@ -1,0 +1,1 @@
+"""Bundled synthetic qualification fixtures."""

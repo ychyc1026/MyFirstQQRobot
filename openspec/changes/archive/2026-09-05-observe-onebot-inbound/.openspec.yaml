@@ -1,0 +1,4 @@
+schema: spec-driven
+change:
+  title: Observe-mode OneBot inbound integration
+  status: active

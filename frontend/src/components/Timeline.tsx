@@ -1,0 +1,4 @@
+export type TimelineItem = { id: string; title: string; detail?: string; time?: string };
+export function Timeline({ items }: { items: TimelineItem[] }) {
+  return <ol className="space-y-0">{items.map((item, index) => <li key={item.id} className="relative grid grid-cols-[16px_1fr] gap-3 pb-5 last:pb-0"><div className="relative flex justify-center"><span className="mt-1.5 h-2 w-2 rounded-full bg-primary" />{index < items.length - 1 ? <span className="absolute bottom-0 top-4 w-px bg-border" /> : null}</div><div><div className="flex items-start justify-between gap-4"><p className="text-sm font-medium">{item.title}</p>{item.time ? <time className="shrink-0 text-xs text-muted-foreground">{item.time}</time> : null}</div>{item.detail ? <p className="mt-1 text-sm text-muted-foreground">{item.detail}</p> : null}</div></li>)}</ol>;
+}

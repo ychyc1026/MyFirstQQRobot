@@ -1,0 +1,139 @@
+{
+  "revision": "siliconflow-2026-09-05",
+  "provider": "siliconflow",
+  "currency": "CNY",
+  "protocol": "openai_compatible",
+  "sanitized_base_host": "api.siliconflow.cn",
+  "retrieved_at": "2026-09-05T06:20:00+00:00",
+  "sources": [
+    "https://siliconflow.cn/pricing",
+    "https://docs.siliconflow.cn/en/userguide/capabilities/text-generation",
+    "https://docs.siliconflow.cn/docs/userguide/capabilities/multimodal-vision",
+    "https://docs.siliconflow.com/cn/userguide/capabilities/images",
+    "https://www.siliconflow.com/models/qwen"
+  ],
+  "entries": [
+    {
+      "model_identifier": "Qwen/Qwen3.5-35B-A3B",
+      "capabilities": ["chat", "stats"],
+      "endpoint_kind": "chat_completions",
+      "billing_basis": "official_cny",
+      "input_cny_per_million": "1.60",
+      "output_cny_per_million": "12.80",
+      "image_cny": null,
+      "notes": "Official CNY table high band for input >= 128k; used as conservative unit prices."
+    },
+    {
+      "model_identifier": "Qwen/Qwen3.6-35B-A3B",
+      "capabilities": ["chat", "stats"],
+      "endpoint_kind": "chat_completions",
+      "billing_basis": "official_cny",
+      "input_cny_per_million": "1.80",
+      "output_cny_per_million": "10.80",
+      "image_cny": null,
+      "notes": "Official CNY flat rate after 2026-06-30 adjustment."
+    },
+    {
+      "model_identifier": "Qwen/Qwen3.5-27B",
+      "capabilities": ["chat", "stats"],
+      "endpoint_kind": "chat_completions",
+      "billing_basis": "official_cny",
+      "input_cny_per_million": "1.80",
+      "output_cny_per_million": "14.40",
+      "image_cny": null,
+      "notes": "Official CNY table high band for input >= 128k."
+    },
+    {
+      "model_identifier": "deepseek-ai/DeepSeek-V3.2",
+      "capabilities": ["chat", "stats"],
+      "endpoint_kind": "chat_completions",
+      "billing_basis": "official_cny",
+      "input_cny_per_million": "4.00",
+      "output_cny_per_million": "6.00",
+      "image_cny": null,
+      "notes": "Official CNY table; more expensive than Qwen 3.5/3.6 35B-A3B."
+    },
+    {
+      "model_identifier": "zai-org/GLM-4.5V",
+      "capabilities": ["vision"],
+      "endpoint_kind": "chat_completions",
+      "billing_basis": "official_cny",
+      "input_cny_per_million": "1.00",
+      "output_cny_per_million": "6.00",
+      "image_cny": null,
+      "notes": "Official CNY multimodal listing; vision uses chat/completions."
+    },
+    {
+      "model_identifier": "Kwai-Kolors/Kolors",
+      "capabilities": ["image"],
+      "endpoint_kind": "images_generations",
+      "billing_basis": "official_cny",
+      "input_cny_per_million": null,
+      "output_cny_per_million": null,
+      "image_cny": "0",
+      "notes": "Official CNY image table lists this model as free; docs example uses images/generations."
+    },
+    {
+      "model_identifier": "Tongyi-MAI/Z-Image-Turbo",
+      "capabilities": ["image"],
+      "endpoint_kind": "images_generations",
+      "billing_basis": "official_cny",
+      "input_cny_per_million": null,
+      "output_cny_per_million": null,
+      "image_cny": "0.10",
+      "notes": "Official CNY image table on siliconflow.cn/pricing; yuan per image."
+    },
+    {
+      "model_identifier": "Qwen/Qwen-Image",
+      "capabilities": ["image"],
+      "endpoint_kind": "images_generations",
+      "billing_basis": "official_cny",
+      "input_cny_per_million": null,
+      "output_cny_per_million": null,
+      "image_cny": "0.30",
+      "notes": "Official CNY image table, yuan per image."
+    },
+    {
+      "model_identifier": "Qwen/Qwen2.5-7B-Instruct",
+      "capabilities": ["chat", "stats"],
+      "endpoint_kind": "chat_completions",
+      "billing_basis": "usd_listing_only",
+      "input_cny_per_million": null,
+      "output_cny_per_million": null,
+      "image_cny": null,
+      "notes": "Still listed on the English model page, but absent from the 2026-09-05 official CNY price table snapshot."
+    },
+    {
+      "model_identifier": "Qwen/Qwen3-VL-8B-Instruct",
+      "capabilities": ["vision"],
+      "endpoint_kind": "chat_completions",
+      "billing_basis": "usd_listing_only",
+      "input_cny_per_million": null,
+      "output_cny_per_million": null,
+      "image_cny": null,
+      "notes": "Qwen3-VL series is documented for chat/completions vision, but this ID had no official CNY unit price in the snapshot."
+    }
+  ],
+  "proposed_routes": [
+    {
+      "capability": "chat",
+      "model_identifier": "Qwen/Qwen3.5-35B-A3B",
+      "rationale": "Official CNY evidence, cheaper than DeepSeek-V3.2 and newer Qwen 27B dense, still stronger than the local 7B example."
+    },
+    {
+      "capability": "stats",
+      "model_identifier": "Qwen/Qwen3.5-35B-A3B",
+      "rationale": "Independent stats route can reuse the same cheap official-CNY chat model without sharing credentials or quotas."
+    },
+    {
+      "capability": "vision",
+      "model_identifier": "zai-org/GLM-4.5V",
+      "rationale": "Only compact vision model on the official CNY table in this snapshot; Qwen3-VL-8B remains recorded but unbounded."
+    },
+    {
+      "capability": "image",
+      "model_identifier": "Kwai-Kolors/Kolors",
+      "rationale": "Official CNY free image model and the current SiliconFlow images/generations example; Qwen-Image is the paid quality alternative."
+    }
+  ]
+}
