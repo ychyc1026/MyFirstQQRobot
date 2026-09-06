@@ -1,14 +1,12 @@
-"""Export a privacy-scrubbed public tree of this repository.
+"""Export a slim, privacy-scrubbed public tree.
 
-The local runnable checkout stays untouched. This script copies allowlisted paths
-into a sibling directory, redacts personal identifiers (option B: keep brand YCH,
-replace the real-name signature with 维护者), and refuses to finish if forbidden
-patterns remain.
+Local private checkout stays untouched. Public output keeps runnable code,
+tests, and a short README. Narrative docs, OpenSpec archives, Cursor rules,
+and private handoff files stay local only.
 
-Usage (from repo root):
+Usage (from private repo root):
 
-    .\\.venv\\Scripts\\python.exe scripts\\export_public_repo.py
-    .\\.venv\\Scripts\\python.exe scripts\\export_public_repo.py --out D:\\path\\ych-bot-public
+    .\\.venv\\Scripts\\python.exe scripts\\export_public_repo.py --force
 """
 
 from __future__ import annotations
@@ -22,17 +20,14 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUT = PROJECT_ROOT.parent / "ych-bot-public"
 
-# Stable fictional QQ numbers so tests that int()-cast still work.
 OWNER_QQ = "2000000001"
 BOT_QQ = "2000000002"
 FRIEND_QQ = "2000000003"
 GROUP_QQ = "2000000004"
 
 COPY_ROOTS = (
-    ".cursor",
     ".githooks",
     "backend",
-    "docs",
     "frontend",
     "migration",
     "openspec",
@@ -45,7 +40,6 @@ COPY_FILES = (
     ".gitattributes",
     ".gitignore",
     "pyproject.toml",
-    "README.md",
     "uv.lock",
 )
 
@@ -73,13 +67,17 @@ SKIP_FILE_SUFFIXES = {
     ".log",
 }
 
-# Drop local operational narrative that is hard to scrub into something useful.
+# Public remote does not need local narrative / process docs.
 DROP_RELATIVE = {
+    ".cursor",
     "HANDOFF_TO_CURSOR.md",
-    "docs/history",
-    "docs/NEXT_PHASE.md",
-    "docs/NAPCAT_UPDATE.md",
+    "docs",
     "frontend/mockups",
+    "frontend/INFORMATION_ARCHITECTURE.md",
+    "frontend/OPS_DASHBOARD.md",
+    "frontend/VISUAL_LANGUAGE.md",
+    "openspec/changes",
+    "migration/MANIFEST.md",
 }
 
 TEXT_SUFFIXES = {
@@ -106,19 +104,18 @@ TEXT_SUFFIXES = {
 }
 
 REPLACEMENTS: tuple[tuple[str, str], ...] = (
-    ("YCH（姚铖颢）", "YCH（维护者）"),
-    ("YCH(姚铖颢)", "YCH（维护者）"),
-    ("创造者为姚铖颢", "创造者为维护者"),
-    ("创造者姚铖颢", "创造者维护者"),
-    ("开发者、创造者：姚铖颢", "开发者、创造者：维护者"),
-    ("姚铖颢", "维护者"),
-    ("2580508026", OWNER_QQ),
-    ("3336425098", BOT_QQ),
-    ("2892917255", FRIEND_QQ),
-    ("928557213", GROUP_QQ),
+    ("YCH（维护者）", "YCH（维护者）"),
+    ("YCH（维护者）", "YCH（维护者）"),
+    ("创造者为维护者", "创造者为维护者"),
+    ("创造者维护者", "创造者维护者"),
+    ("开发者、创造者：维护者", "开发者、创造者：维护者"),
+    ("维护者", "维护者"),
+    ("2000000001", OWNER_QQ),
+    ("2000000002", BOT_QQ),
+    ("2000000003", FRIEND_QQ),
+    ("2000000004", GROUP_QQ),
 )
 
-# Absolute local paths that must not ship.
 PATH_SCRUBS: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"D:\\\\My_code\\\\NapCat\.Shell\.Windows\.Node\\\\ych-bot", re.I), "<repo-root>"),
     (re.compile(r"D:/My_code/NapCat\.Shell\.Windows\.Node/ych-bot", re.I), "<repo-root>"),
@@ -126,75 +123,70 @@ PATH_SCRUBS: tuple[tuple[re.Pattern[str], str], ...] = (
         re.compile(r"D:\\\\My_code\\\\napcat-rollback-[^\s`\"']+", re.I),
         "<napcat-rollback-outside-repo>",
     ),
-    (re.compile(r"D:/My_code/napcat-rollback-[^\s`\"']+", re.I), "<napcat-rollback-outside-repo>"),
+    (re.compile(r"<napcat-rollback-outside-repo>`\"']+", re.I), "<napcat-rollback-outside-repo>"),
 )
 
 FORBIDDEN_LITERALS = (
-    "姚铖颢",
-    "2580508026",
-    "3336425098",
-    "2892917255",
-    "928557213",
+    "维护者",
+    "2000000001",
+    "2000000002",
+    "2000000003",
+    "2000000004",
     "BEGIN PRIVATE KEY",
 )
 
 FORBIDDEN_PATTERNS = (re.compile(r"\bsk-[A-Za-z0-9_-]{20,}"),)
 
-PUBLIC_HANDOFF = """# Handoff (public template)
+PUBLIC_README = f"""# YCH Bot
 
-This tree is a **privacy-scrubbed public export** of YCH Bot. It is not a runnable
-copy of anyone's production machine.
+基于 NapCat / OneBot 的本机 QQ 助手（公开模板）。
 
-## Identity (template)
+- 品牌：**YCH**
+- 公开树里的创造者显示名：**维护者**
+- 示例 QQ（占位，不是真实账号）：主号 `{OWNER_QQ}`，机器人 `{BOT_QQ}`
 
-- Brand: YCH
-- Creator/developer display name in this export: 维护者
-- Example owner QQ in docs/tests: `2000000001`
-- Example bot QQ in docs/tests: `2000000002`
+这是脱敏后的代码模板，不是任何人的本机生产环境。密钥、聊天记录、运行库都不会进仓库。
 
-Replace these with your own values in `.env` after copy. Do not commit real tokens.
+## 本地运行
 
-## Before coding
+```powershell
+uv sync --extra dev
+Copy-Item .env.example .env
+# 填写你自己的 QQ、令牌和模型配置；默认外发与模型网络关闭
+uv run ych-bot
+```
 
-1. Read `openspec/config.yaml` and `openspec/specs/`.
-2. Read `docs/README.md` and `docs/operator/` for operator surfaces.
-3. Copy `.env.example` to `.env` and fill only local secrets.
+前端：
 
-## Safety defaults
+```powershell
+npm --prefix frontend install
+npm --prefix frontend run dev
+```
 
-Outbound QQ, model network, Qzone publish, privacy-job execution, search, image
-generation, and OCR stay off until you configure and authorize them. Readiness
-is necessary but never sufficient.
+观察模式启动（不打开外发）：
 
-## Not included
+```powershell
+.\\scripts\\start-observe.bat
+```
 
-- Real `.env`, SQLite runtime data, imports, exports, privacy archives
-- Local operational handoff history and NapCat rollback paths
-- Any live chat bodies
+## 仓库里有什么
+
+- `backend/`：Python 后端与分层测试
+- `frontend/`：操作仪表盘
+- `openspec/specs/`：当前行为规格（变更归档只留在私有仓）
+- `scripts/`：启动与导出辅助
+- `.env.example`：可提交的空配置样例
+
+## 安全默认
+
+外发 QQ、模型网络、空间发布、隐私任务、搜索、文生图、OCR 默认关闭。  
+就绪检查通过也不等于已经授权真实效果。
+
+## 私有内容
+
+完整交接文档、阶段历史、OpenSpec 变更归档、Cursor 规则等
+只保留在维护者本机私有仓，不推送到此公开仓库。
 """
-
-PUBLIC_NEXT_PHASE = """# Next phase (public template)
-
-This public export does not ship a private production timeline.
-
-Start new work with an OpenSpec change under `openspec/changes/`, implement against
-temporary databases and fake transports, then archive into `openspec/specs/`.
-
-Keep search, image generation, privacy-job execution, and OCR closed until you
-explicitly want those capabilities.
-"""
-
-PUBLIC_README_BANNER = """# YCH Bot
-
-> Public template export. Brand stays **YCH**; the creator display name in this
-> tree is **维护者**. Example QQ numbers are fictional placeholders
-> (`2000000001` owner / `2000000002` bot). Do not treat them as a live account.
-
-"""
-
-
-def should_skip_dir(name: str) -> bool:
-    return name in SKIP_DIR_NAMES or name.startswith(".")
 
 
 def should_skip_file(path: Path) -> bool:
@@ -242,20 +234,15 @@ def copy_tree(source_root: Path, dest_root: Path, relative_root: str) -> None:
     if not source.exists():
         return
     for path in source.rglob("*"):
+        if not path.is_file():
+            continue
         relative = path.relative_to(source_root)
         if drop_path(relative):
             continue
-        if path.is_dir():
-            if should_skip_dir(path.name):
-                # rglob still descends; skip by not copying children via continue on files
-                continue
-            continue
-        # Skip files under skipped directories
         if any(part in SKIP_DIR_NAMES for part in relative.parts):
             continue
         if should_skip_file(path):
             continue
-        # Keep only .gitkeep / README under storage and migration legacy dumps
         posix = relative.as_posix()
         if posix.startswith("storage/") and path.name not in {".gitkeep", "README.md"}:
             continue
@@ -267,74 +254,56 @@ def copy_tree(source_root: Path, dest_root: Path, relative_root: str) -> None:
 
 
 def write_public_overlays(out: Path) -> None:
-    (out / "HANDOFF_TO_CURSOR.md").write_text(PUBLIC_HANDOFF, encoding="utf-8", newline="\n")
-    (out / "docs" / "NEXT_PHASE.md").write_text(PUBLIC_NEXT_PHASE, encoding="utf-8", newline="\n")
-    readme = out / "README.md"
-    body = readme.read_text(encoding="utf-8") if readme.exists() else ""
-    body = scrub_text(body)
-    # Prefer the public banner over a scrubbed private status dump when present.
-    if body.lstrip().startswith("# YCH Bot"):
-        rest = body.split("\n", 1)[1] if "\n" in body else ""
-        body = PUBLIC_README_BANNER + rest
-    else:
-        body = PUBLIC_README_BANNER + "\n" + body
-    readme.write_text(body, encoding="utf-8", newline="\n")
-    (out / "PUBLIC_EXPORT.md").write_text(
-        "\n".join(
-            [
-                "# Public export notes",
-                "",
-                "Generated by `scripts/export_public_repo.py` (option B).",
-                "",
-                "- Brand: YCH",
-                "- Creator display name: 维护者",
-                f"- Placeholder owner QQ: `{OWNER_QQ}`",
-                f"- Placeholder bot QQ: `{BOT_QQ}`",
-                f"- Placeholder friend QQ: `{FRIEND_QQ}`",
-                f"- Placeholder group QQ: `{GROUP_QQ}`",
-                "- Dropped: private handoff, docs/history, local NapCat path notes",
-                "- Not copied: .env, runtime SQLite, imports/exports, .venv, node_modules",
-                "",
-                "Push this directory as its own git repo.",
-                "Do not force-push your private local history here.",
-                "",
-            ]
-        ),
-        encoding="utf-8",
-        newline="\n",
-    )
+    (out / "README.md").write_text(PUBLIC_README, encoding="utf-8", newline="\n")
+    # Keep a tiny frontend readme if the long ones were dropped.
+    frontend_readme = out / "frontend" / "README.md"
+    if not frontend_readme.exists():
+        frontend_readme.write_text(
+            "# Frontend\n\nYCH operator dashboard. `npm install` then `npm run dev`.\n",
+            encoding="utf-8",
+            newline="\n",
+        )
 
 
 def verify(out: Path) -> list[str]:
     findings: list[str] = []
+    banned_paths = (
+        "docs/",
+        "openspec/changes/",
+        ".cursor/",
+        "HANDOFF_TO_CURSOR.md",
+        "PUBLIC_EXPORT.md",
+    )
     for path in out.rglob("*"):
-        if not path.is_file() or not is_text_file(path):
+        if not path.is_file():
+            continue
+        relative = path.relative_to(out).as_posix()
+        if any(relative == b.rstrip("/") or relative.startswith(b) for b in banned_paths):
+            findings.append(f"{relative}: should not exist in slim public export")
             continue
         if any(part in SKIP_DIR_NAMES for part in path.relative_to(out).parts):
+            continue
+        if not is_text_file(path):
             continue
         try:
             text = path.read_text(encoding="utf-8")
         except UnicodeDecodeError:
             continue
-        relative = path.relative_to(out).as_posix()
+        if relative == "scripts/export_public_repo.py":
+            continue
         for token in FORBIDDEN_LITERALS:
             if token in text:
-                if relative == "scripts/export_public_repo.py":
-                    continue
                 findings.append(f"{relative}: still contains {token!r}")
-        if relative != "scripts/export_public_repo.py":
-            for pattern in FORBIDDEN_PATTERNS:
-                if pattern.search(text):
-                    findings.append(f"{relative}: still contains secret-shaped token")
+        for pattern in FORBIDDEN_PATTERNS:
+            if pattern.search(text):
+                findings.append(f"{relative}: still contains secret-shaped token")
     return findings
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
-    parser.add_argument(
-        "--force", action="store_true", help="Delete existing output directory first"
-    )
+    parser.add_argument("--force", action="store_true")
     args = parser.parse_args()
     out: Path = args.out.resolve()
 
@@ -360,15 +329,14 @@ def main() -> int:
 
     findings = verify(out)
     if findings:
-        print(f"Export incomplete: {len(findings)} forbidden leftovers", file=sys.stderr)
+        print(f"Export incomplete: {len(findings)} problems", file=sys.stderr)
         for item in findings[:40]:
             print(f"  - {item}", file=sys.stderr)
         return 1
 
     file_count = sum(1 for p in out.rglob("*") if p.is_file())
-    print(f"Public export ready: {out}")
+    print(f"Slim public export ready: {out}")
     print(f"Files: {file_count}")
-    print("Next: cd into that directory, git init, create a GitHub repo, push.")
     return 0
 
 
